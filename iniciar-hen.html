@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HEN 14.00 — teste</title>
+<style>
+  html,body{margin:0;padding:0;min-height:100%;background:#0b0d10;color:#c8ced8;
+    font:16px/1.5 "Segoe UI",system-ui,sans-serif}
+  #wrap{max-width:760px;margin:0 auto;padding:24px 18px 40px}
+  h1{font-size:20px;letter-spacing:.08em;margin:0 0 4px;color:#e6ebf2}
+  .sub{color:#8b95a3;font-size:13px;margin:0 0 18px}
+  .card{background:#11151b;border:1px solid #1e2732;border-radius:8px;padding:14px 16px;margin:0 0 12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+  .k{color:#8b95a3;min-width:120px}
+  .v{color:#e6ebf2}
+  .ok{color:#7fd0a0}.bad{color:#d08a7f}.warn{color:#d8c07f}
+  button{display:block;width:100%;padding:16px;margin:14px 0 0;border:0;border-radius:8px;
+    background:#1b6b46;color:#eafff3;font-size:17px;font-weight:700;letter-spacing:.06em}
+  button:active{background:#145236}
+  button.alt{background:#243040;color:#c8ced8;font-size:14px;font-weight:600}
+  code{color:#9fb3d0}
+  ol{padding-left:20px;margin:8px 0 0}
+  li{margin:4px 0}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <h1>HEN 14.00 — modo estável</h1>
+  <p class="sub">entrada HEN puro. sem GoldHEN. sem parâmetros velhos.</p>
+
+  <div class="card">
+    <div class="row"><span class="k">firmware (UA)</span><span class="v" id="fw">lendo...</span></div>
+    <div class="row"><span class="k">modo</span><span class="v">hx1400 + kv + stage3..10</span></div>
+    <div class="row"><span class="k">payload</span><span class="v">hen.bin (562.240 B)</span></div>
+    <div class="row"><span class="k">goldhen</span><span class="v ok">desligado</span></div>
+  </div>
+
+  <div class="card">
+    <b>antes de rodar</b>
+    <ol>
+      <li>Console em <b>14.00</b> (Ajustes → Sistema → Informações do sistema).</li>
+      <li>Desligar <b>completamente</b> (não modo de repouso) e ligar de novo.</li>
+      <li>Fechar todas as abas do navegador do PS4.</li>
+      <li>Tocar no botão abaixo uma vez. Não tocar de novo durante o processo.</li>
+    </ol>
+  </div>
+
+  <button id="go">INICIAR HEN</button>
+  <button id="diag" class="alt">Só diagnóstico (para antes de escrever no kernel)</button>
+
+  <p class="sub" style="margin-top:16px">
+    Se falhar: <b>desligue completamente</b> antes de tentar de novo. Não rode duas vezes no mesmo boot.
+  </p>
+</div>
+
+<script>
+(function () {
+  var fwEl = document.getElementById("fw");
+  var m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
+  var fw = m ? (m[1] + "." + m[2]) : "não identificado";
+  fwEl.textContent = fw;
+  fwEl.className = "v " + (m && m[1] === "14" && m[2] === "00" ? "ok" : "bad");
+
+  function target(extra) {
+    var base = "raw13/jb.html?log=1&mem=1&slots=9100000&hx1400=1&kv=1&fam=0&telemetry=0" +
+      "&stage3=1&stage4=1&stage5=1&stage6=1&stage7=1&stage8=1&stage9=1&stage10=1&retry=4";
+    return base + (extra || "") + "&v=" + Date.now();
+  }
+
+  document.getElementById("go").onclick = function () {
+    location.replace(target(""));
+  };
+  document.getElementById("diag").onclick = function () {
+    // stage3=0: para depois do leak de kbase, antes de qualquer escrita no kernel.
+    location.replace("raw13/jb.html?log=1&mem=1&slots=9100000&hx1400=1&kv=1&fam=0&telemetry=0" +
+      "&stage3=0&retry=4&v=" + Date.now());
+  };
+})();
+</script>
+</body>
+</html>
