@@ -32,6 +32,7 @@
 
   <div class="card">
     <div class="row"><span class="k">firmware (UA)</span><span class="v" id="fw">lendo...</span></div>
+    <div class="row"><span class="k">mem=1</span><span class="v">3.000.000 slots (~24 MB)</span></div>
     <div class="row"><span class="k">mem=2</span><span class="v">1.500.000 slots (~12 MB)</span></div>
     <div class="row"><span class="k">mem=3</span><span class="v">800.000 slots (~6 MB)</span></div>
   </div>
@@ -40,16 +41,18 @@
     <b>como ler o resultado</b>
     <ol>
       <li><code>HX1400-KBASE</code> = leak de kernel OK.</li>
-      <li><code>HX1400-PORT-FAIL</code> = leak falhou; memória não era o problema.</li>
-      <li>“Out of memory” ou página fechando = desça para o mem=3.</li>
+      <li><code>HX1400-PORT-FAIL</code> = leak falhou; falta slot, não memória.</li>
+      <li>“Out of memory” ou página fechando = desça um nível.</li>
       <li>Se falhar, desligue completamente antes de tentar de novo.</li>
     </ol>
   </div>
 
-  <button id="d2">1. DIAGNÓSTICO mem=2 (para antes do kernel)</button>
-  <button id="d3" class="light">2. DIAGNÓSTICO mem=3 (se mem=2 der erro de memória)</button>
-  <button id="h2">3. HEN completo mem=2</button>
-  <button id="h3" class="min">4. HEN completo mem=3</button>
+  <button id="d1">1. DIAGNÓSTICO mem=1 (3M — meio-termo)</button>
+  <button id="d2" class="light">2. DIAGNÓSTICO mem=2 (1.5M — se o 1 der memória)</button>
+  <button id="d3" class="min">3. DIAGNÓSTICO mem=3 (800k — se o 2 der memória)</button>
+  <button id="h1">4. HEN completo mem=1 (3M)</button>
+  <button id="h2" class="light">5. HEN completo mem=2 (1.5M)</button>
+  <button id="h3" class="min">6. HEN completo mem=3 (800k)</button>
 </div>
 
 <script>
@@ -70,8 +73,10 @@
     location.replace(q + "&v=" + Date.now());
   }
 
+  document.getElementById("d1").onclick = function () { go(1, false); };
   document.getElementById("d2").onclick = function () { go(2, false); };
   document.getElementById("d3").onclick = function () { go(3, false); };
+  document.getElementById("h1").onclick = function () { go(1, true); };
   document.getElementById("h2").onclick = function () { go(2, true); };
   document.getElementById("h3").onclick = function () { go(3, true); };
 })();
